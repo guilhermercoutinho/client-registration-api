@@ -7,8 +7,49 @@ export const listClients = async (req, res) => {
     const allClients = await prisma.client.findMany();
 
     return res.status(200).json(allClients);
-  } catch (error) {}
-  return res.status(500).json({ error: "Erro ao listar clientes." });
+  } catch (error) {
+    return res.status(500).json({ error: "Erro ao listar clientes." });
+  }
 };
 
-export const createClient = (req, res) => {};
+export const createClient = async (req, res) => {
+  try {
+    const data = req.body;
+
+    await prisma.client.create({
+      data: { ...data },
+    });
+
+    return res
+      .status(201)
+      .json({ message: "Cliente cadastrado com sucesso!", data });
+  } catch (error) {
+    return res.status(500).json({ error: "Erro ao cadastrar cliente!" });
+  }
+};
+
+export const updateClient = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const data = req.body;
+
+    const existingClient = await prisma.client.findUnique({
+      where: { id },
+    });
+
+    !existingClient &&
+      res.status(404).json({ error: `Cliente Id ${id} não encontrado.` });
+
+    const updatedClient = await prisma.client.update({
+      where: { id },
+      data: { ...data },
+    });
+
+    res.status(200).json({
+      message: `Cliente Id: ${id} atualizado com sucesso.`,
+      updatedClient,
+    });
+  } catch (error) {
+    res.status(500).json({ error: "Erro ao atualizar usuário." });
+  }
+};
