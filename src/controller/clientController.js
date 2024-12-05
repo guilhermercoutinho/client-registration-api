@@ -1,6 +1,13 @@
 import prisma from "../config/prismaClient.js";
 
-const clients = [];
+export const handleError = (
+  res,
+  error,
+  message = "Erro interno do servidor."
+) => {
+  console.error(error);
+  res.status(500).json({ error: message });
+};
 
 export const listClients = async (req, res) => {
   try {
@@ -8,7 +15,7 @@ export const listClients = async (req, res) => {
 
     return res.status(200).json(allClients);
   } catch (error) {
-    return res.status(500).json({ error: "Erro ao listar clientes." });
+    handleError(res, error, "Erro ao listar clientes");
   }
 };
 
@@ -24,7 +31,7 @@ export const createClient = async (req, res) => {
       .status(201)
       .json({ message: "Cliente cadastrado com sucesso!", data });
   } catch (error) {
-    return res.status(500).json({ error: "Erro ao cadastrar cliente!" });
+    handleError(res, error, "Erro ao cadastrar cliente");
   }
 };
 
@@ -43,7 +50,7 @@ export const updateClient = async (req, res) => {
       updatedClient,
     });
   } catch (error) {
-    res.status(500).json({ error: "Erro ao atualizar usuário." });
+    handleError(res, error, "Erro ao atualizar cliente");
   }
 };
 
@@ -56,6 +63,6 @@ export const deleteClient = async (req, res) => {
 
     res.status(200).send();
   } catch (error) {
-    res.status(500).json({ error: "Erro ao deletar usuário." });
+    handleError(res, error, "Erro ao deletar cliente");
   }
 };
