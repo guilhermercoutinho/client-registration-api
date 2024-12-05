@@ -33,13 +33,6 @@ export const updateClient = async (req, res) => {
     const { id } = req.params;
     const data = req.body;
 
-    const existingClient = await prisma.client.findUnique({
-      where: { id },
-    });
-
-    !existingClient &&
-      res.status(404).json({ error: `Cliente Id ${id} não encontrado.` });
-
     const updatedClient = await prisma.client.update({
       where: { id },
       data: { ...data },
@@ -51,5 +44,18 @@ export const updateClient = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ error: "Erro ao atualizar usuário." });
+  }
+};
+
+export const deleteClient = async (req, res) => {
+  const { id } = req.params;
+  try {
+    await prisma.client.delete({
+      where: { id },
+    });
+
+    res.status(200).send();
+  } catch (error) {
+    res.status(500).json({ error: "Erro ao deletar usuário." });
   }
 };
