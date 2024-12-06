@@ -4,9 +4,11 @@ const validateClientExistent = async (req, res, next) => {
   const { id } = req.params;
 
   try {
-    const client = prisma.client.findUnique({ where: { id } });
+    const client = await prisma.client.findUnique({ where: { id } });
 
-    !client && res.status(404).json({ error: "Cliente não encontrado" });
+    if (!client) {
+      return res.status(404).json({ error: "Cliente não encontrado" });
+    }
 
     next();
   } catch (error) {
